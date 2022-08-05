@@ -1,0 +1,48 @@
+#==================================================================
+# Clusters definitions
+#
+# Supported k8s providers: aks, eks, gke, tkg, minikube
+#
+# see resource requirements:
+#   https://docs.vmware.com/en/Tanzu-Application-Platform/1.1/tap/GUID-prerequisites.html#resource-requirements-4
+#   https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/tanzu-service-mesh-environment-requirements-and-supported-platforms/GUID-D0B939BE-474E-4075-9A65-3D72B5B9F237.html
+#==================================================================
+view-cluster: # TAP view profile installed
+  name: "dekt-view"
+  provider: aks
+  nodes: 3
+dev-cluster: # TAP interate profile installed
+  name: "dekt-dev"
+  provider: aks 
+  nodes: 4 
+stage-cluster: #TAP build profile installed
+  name: "dekt-stage"
+  provider: eks
+  nodes: 5 
+prod-cluster: # TAP run profile installed
+  name: "dekt-prod"
+  provider: eks 
+  nodes: 3 
+brownfield-cluster: #for bronwfield apis demo, SCGW and TSM, no TAP installed
+  name: "dekt-brownfield"
+  provider: gke
+  nodes: 5 
+
+#==================================================================
+# Configs
+#==================================================================
+tap:
+  #version: "1.1.1"
+  version: "1.2.0"
+  systemRepo: "dekt-system"
+  prodAuditFile: "audit-prod.log"
+apps-namespaces:
+  dev: "mydev"
+  team: "myteam"
+  stageProd: "dekt-apps"
+dns:
+  domain: "[CHANGE_ME]"
+  godaddyApiKey: "[CHANGE_ME]"
+  godaddyApiSecret: "[CHANGE_ME]"
+apis:
+  scgwInstallDirectory: "[CHANGE_ME]"

@@ -1,0 +1,12 @@
+#@data/values
+---
+nodeSelector: null
+deployment:
+  updateStrategy: null
+  rollingUpdate:
+    maxUnavailable: null
+    maxSurge: null
+daemonset:
+  updateStrategy: null
+secretgenController:
+  pspNames: ["vmware-system-privileged"]

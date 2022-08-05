@@ -1,0 +1,10 @@
+apiVersion: accelerator.apps.tanzu.vmware.com/v1alpha1
+kind: Accelerator
+metadata:
+  name: my-web-backend
+spec:
+  git:
+    interval: 10s
+    url: https://github.com/dektlong/web-backend-acc
+    ref:
+      branch: main

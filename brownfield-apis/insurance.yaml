@@ -1,0 +1,27 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: insurance-routes-config
+spec:
+  service: 
+    name: insurance-api
+  routes:
+    - predicates:
+        - Path=/list-insurance
+        - Method=GET
+      ssoEnabled: true
+    - predicates:
+        - Path=/process-claim/{personID}/policy/{policyDetails}
+        - Method=POST
+      ssoEnabled: true
+      filters:
+      - CircuitBreaker="insuranceCircuitBreaker,forward:/alternate-donation-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: insurance-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80

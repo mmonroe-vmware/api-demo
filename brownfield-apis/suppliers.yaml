@@ -1,0 +1,26 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: suppliers-routes-config
+spec:
+  service: 
+    name: suppliers-api
+  routes:
+    - predicates:
+        - Path=/list-outgoing-payments/
+        - Method=GET
+      filters:
+        - RateLimit=2,10s
+    - predicates:
+        - Path=/process-payment/*/supplier/**
+        - Method=POST,PUT,DELETE
+      ssoEnabled: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suppliers-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80

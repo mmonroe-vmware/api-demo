@@ -1,0 +1,27 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: locations-routes-config
+spec:
+  service: 
+    name: locations-api
+  routes:
+    - predicates:
+        - Path=/list-locations
+        - Method=GET
+      ssoEnabled: true
+    - predicates:
+        - Path=/team-location/{teamID}
+        - Method=POST
+      ssoEnabled: true
+      filters:
+      - CircuitBreaker="locationsCircuitBreaker,forward:/alternate-donation-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: locations-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80

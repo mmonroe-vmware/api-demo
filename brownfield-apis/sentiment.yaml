@@ -1,0 +1,32 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: sentiment-routes-config
+#======== supply-chain decorations ("design once API anywhere")
+  labels: 
+    tsm-scg: sentiment-gns
+spec:
+  service: 
+    name: sentiment-api
+    predicates:
+      - Header=X-Request-Id
+    ssoEnabled: true
+#=========
+  routes:
+    - predicates:
+        - Path=/list-sentiment
+        - Method=GET
+    - predicates:
+        - Path=/process-sentiment/{teamID}/sensor/{sensorID}
+        - Method=POST
+      filters:
+      - CircuitBreaker="sentimentCircuitBreaker,forward:/alternate-donation-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentiment-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80

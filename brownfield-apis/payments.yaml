@@ -1,0 +1,26 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: payments-routes-config
+spec:
+  service: 
+    name: payments-api
+  routes:
+    - predicates:
+        - Path=/list-payments
+        - Method=GET
+      ssoEnabled: true
+    - predicates:
+        - Path=/process-payment/{teamID}
+      ssoEnabled: true
+      filters:
+      - CircuitBreaker="paymentsCircuitBreaker,forward:/alternate-donation-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80

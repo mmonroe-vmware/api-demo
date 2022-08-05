@@ -1,0 +1,56 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: datacheck-routes-config
+#======== supply-chain decorations ("design once API anywhere")
+  labels: 
+    tsm-scg: datacheck-gns
+spec:
+  service: 
+    name: datacheck-api
+      - Header=X-Request-Id
+    ssoEnabled: true
+    filters:
+      - RateLimit=2,60s
+#=========
+  routes:
+    - predicates:
+        - Path=/api/medical-history/{personID}
+        - Method=GET
+      title: "Verify a clean medical history"
+      description: "Verify a medical history for a given social security / taxId number "
+      tags:
+        - Compatibility
+    - predicates:
+        - Path=/api/good-credit/{personID}
+        - Method=GET
+      title: "Verify a good credit score"
+      description: "Verify a good credit score for a given adoper's social security / taxId number "
+      tags:
+        - Identity
+    - predicates:
+        - Path=/api/criminal-record/{personID}
+        - Method=GET
+      ssoEnabled: true
+      tokenRelay: true
+      title: "Run criminal-record check"
+      description: "Run a criminal record check for a given adoper's social security / taxId number"
+      tags:
+        - Identity
+    - predicates:
+        - Path=/api/house-visit-request/{personID}/date/{visitDate}
+        - Method=POST,PUT,DELETE
+      ssoEnabled: true
+      tokenRelay: true
+      title: "Manage house-visits requests"
+      tags:
+        - Compatibility
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: datacheck-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
